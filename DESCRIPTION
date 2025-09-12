@@ -1,0 +1,32 @@
+Package: tmapverse
+Type: Package
+Title: The tmapverse Meta-Package for Thematic Mapping
+Version: 0.0.1
+Authors@R: c(
+	person("Martijn", "Tennekes", , "mtennekes@gmail.com", role = c("aut", "cre")),
+	person("Jakub", "Nowosad", , "nowosad.jakub@gmail.com", role = "ctb"),
+	person("Olivier", "Roy", role = "ctb"))
+Description: The 'tmapverse' package attaches a set of packages that are 
+    commonly used for spatial plotting with 'tmap'. It includes 'tmap' and its 
+    extensions ('tmap.glyphs', 'tmap.networks', 'tmap.cartogram'), as well as 
+    supporting spatial data packages ('sf', 'stars', 'terra'), and 'cols4all' for 
+    exploring color palettes. The 
+    package is intended for use in thematic mapping workflows and does not 
+    include the full set of packages from the R-spatial ecosystem.
+Depends: R (>= 4.1)
+Imports:
+	tmap,
+	tmap.glyphs,
+	tmap.networks,
+	tmap.cartogram,
+	sf,
+	stars,
+	terra,
+	cols4all,
+	cli,
+	crayon
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
