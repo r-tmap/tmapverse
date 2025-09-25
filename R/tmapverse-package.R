@@ -174,7 +174,7 @@
 
 .onAttach <- function(libname, pkgname) {
 	# Core tmapverse packages for table
-	pkgs <- c("sf", "tmap", "tmap.glyphs", "tmap.networks", "tmap.cartogram",
+	pkgs <- c("sf", "tmap", "tmap.glyphs", "tmap.networks", "tmap.cartogram", "tmap.mapgl",
 			  "stars", "terra", "cols4all")
 
 	# Supporting packages for cols4all GUI (not in table)
