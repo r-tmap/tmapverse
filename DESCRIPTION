@@ -1,7 +1,7 @@
 Package: tmapverse
 Type: Package
 Title: Meta-Package for Thematic Mapping with 'tmap'
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: c(
 	person("Martijn", "Tennekes", , "mtennekes@gmail.com", role = c("aut", "cre")),
 	person("Robin", "Lovelace", , "rob00x@gmail.com", role = "ctb"))
