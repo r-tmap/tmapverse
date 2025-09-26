@@ -10,50 +10,61 @@
 "_PACKAGE"
 
 .onAttach <- function(libname, pkgname) {
-	# Core tmapverse packages for table
-	pkgs <- c("sf", "tmap", "tmap.glyphs", "tmap.networks", "tmap.cartogram", "tmap.mapgl",
-			  "stars", "terra", "cols4all")
+	# Core tmapverse packages
+	core_pkgs <- c(
+		"sf", "tmap", "tmap.glyphs", "tmap.networks",
+		"tmap.cartogram", "tmap.mapgl", "stars", "terra", "cols4all"
+	)
 
-	# Supporting packages for cols4all GUI (not in table)
+	# Supporting packages (used for cols4all GUI, not in startup table)
 	support_pkgs <- c("shiny", "shinyjs", "kableExtra", "colorblindcheck")
 
-	# Load sf first, suppress automatic startup message
-	if (requireNamespace("sf", quietly = TRUE)) {
-		suppressPackageStartupMessages(library("sf", character.only = TRUE, quietly = TRUE))
-	}
+	# Attach core packages quietly
+	attach_core(core_pkgs)
 
-	# Attach core packages so functions are directly available
-	for (p in setdiff(pkgs, "sf")) {
-		if (requireNamespace(p, quietly = TRUE)) {
-			suppressPackageStartupMessages(library(p, character.only = TRUE, quietly = TRUE))
-		}
-	}
-
-	# Load supporting packages silently (not in table)
+	# Attach supporting namespaces (no search path clutter)
 	for (p in support_pkgs) {
 		if (requireNamespace(p, quietly = TRUE) && !p %in% loadedNamespaces()) {
 			attachNamespace(p)
 		}
 	}
 
-	# Collect versions for table
-	versions <- vapply(pkgs, function(p) {
+	# Collect versions
+	versions <- vapply(core_pkgs, function(p) {
 		if (requireNamespace(p, quietly = TRUE)) {
 			as.character(utils::packageVersion(p))
-		} else "not installed"
+		} else {
+			"not installed"
+		}
 	}, character(1))
 
-	# Green checkmark
+	# Emit tidyverse-style startup message
+	packageStartupMessage(startup_msg(core_pkgs, versions))
+}
+
+attach_core <- function(pkgs) {
+	for (p in pkgs) {
+		if (requireNamespace(p, quietly = TRUE)) {
+			suppressPackageStartupMessages(
+				library(p, character.only = TRUE, quietly = TRUE)
+			)
+		}
+	}
+}
+
+startup_msg <- function(pkgs, versions) {
 	check <- crayon::green(cli::symbol$tick)
 
-	# Two-column formatting
-	n <- ceiling(length(pkgs)/2)
+	# Two-column table
+	n <- ceiling(length(pkgs) / 2)
 	left  <- sprintf("%s %-14s %-7s", check, pkgs[1:n], versions[1:n])
 	right <- sprintf("%s %-14s %-7s", check, pkgs[(n+1):length(pkgs)], versions[(n+1):length(pkgs)])
-	if (length(left) > length(right)) right <- c(right, rep("", length(left) - length(right)))
+	if (length(left) > length(right)) {
+		right <- c(right, rep("", length(left) - length(right)))
+	}
 	pkg_table <- paste0(left, "    ", right, collapse = "\n")
 
-	# Manually print sf linking line
+	# sf linking line
 	sf_ext <- sf::sf_extSoftVersion()
 	sf_line <- paste0(
 		"Linking to GEOS ", sf_ext[["GEOS"]],
@@ -62,13 +73,12 @@
 		"; sf_use_s2() is ", sf::sf_use_s2()
 	)
 
-	# Print tidyverse-style startup
-	msg = paste(
-		cli::cat_line(c("i"= "Loading tmapverse")),
-		cli::cat_line(sf_line),
-		cli::cat_rule(left = "Attaching packages", right = "tmapverse"),
-		cli::cat_line(pkg_table),
+	# Build banner with format_* (no printing yet!)
+	paste(
+		cli::format_message("Loading tmapverse"),
+		sf_line,
+		cli::rule(left = "Attaching packages", right = "tmapverse"),
+		pkg_table,
 		sep = "\n"
 	)
-	packageStartupMessage(msg)
 }
