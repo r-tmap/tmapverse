@@ -18,7 +18,7 @@ workflows and does not include the full set of packages from the R-spatial ecosy
 
 Other contributors:
 \itemize{
-  \item Olivier Roy [contributor]
+  \item Robin Lovelace \email{rob00x@gmail.com} [contributor]
 }
 
 }
