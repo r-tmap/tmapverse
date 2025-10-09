@@ -18,12 +18,17 @@ tmapverse_packages = function (include_deps = FALSE, recursive = FALSE)
 
 	# Include dependencies if requested
 	if (include_deps) {
-		# Safe dependency lookup (avoids needing CRAN mirror)
+		# Safe dependency lookup without using installed.packages()
 		ap = tryCatch(
 			utils::available.packages(),
-			error = function(e) utils::installed.packages()
+			error = function(e) NULL
 		)
-		deps = tools::package_dependencies(pkgs, db = ap, recursive = recursive)
+		if (is.null(ap)) {
+			# fallback: just use direct deps (no recursive lookup)
+			deps = tools::package_dependencies(pkgs, recursive = FALSE)
+		} else {
+			deps = tools::package_dependencies(pkgs, db = ap, recursive = recursive)
+		}
 		pkgs = unique(sort(c(pkgs, unlist(deps, use.names = FALSE))))
 	}
 
@@ -48,11 +53,16 @@ tmapverse_packages_versions = function(include_deps = FALSE, recursive = FALSE, 
 
 	all_pkgs = tryCatch({
 		utils::available.packages(repos = repos)
-	}, error = function(e) {
-		utils::installed.packages()
-	})
+	}, error = function(e) NULL)
 
-	cran_version = lapply(all_pkgs[pkgs, "Version"], package_version)
+	if (is.null(all_pkgs)) {
+		# fallback: use packageDescription for local versions only
+		cran_version = replicate(length(pkgs), package_version("0.0.0"), simplify = FALSE)
+		names(cran_version) = pkgs
+	} else {
+		cran_version = lapply(all_pkgs[pkgs, "Version"], package_version)
+	}
+
 	local_version = lapply(pkgs, utils::packageVersion)
 	behind = mapply(`>`, cran_version, local_version)
 
