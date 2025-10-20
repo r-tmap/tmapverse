@@ -18,17 +18,21 @@ tmapverse_packages = function (include_deps = FALSE, recursive = FALSE)
 
 	# Include dependencies if requested
 	if (include_deps) {
-		# Safe dependency lookup without using installed.packages()
 		ap = tryCatch(
 			utils::available.packages(),
 			error = function(e) NULL
 		)
+
+		# Use an empty db with correct column structure to avoid errors
 		if (is.null(ap)) {
-			# fallback: just use direct deps (no recursive lookup)
-			deps = tools::package_dependencies(pkgs, recursive = FALSE)
-		} else {
-			deps = tools::package_dependencies(pkgs, db = ap, recursive = recursive)
+			ap = structure(character(0), dim = c(0L, 17L), dimnames = list(NULL,
+																		   c("Package", "Version", "Priority", "Depends", "Imports",
+																		     "LinkingTo", "Suggests", "Enhances", "License", "License_is_FOSS",
+																		     "License_restricts_use", "OS_type", "Archs", "MD5sum", "NeedsCompilation",
+																		     "File", "Repository")))
 		}
+
+		deps = tools::package_dependencies(pkgs, db = ap, recursive = recursive)
 		pkgs = unique(sort(c(pkgs, unlist(deps, use.names = FALSE))))
 	}
 
@@ -45,18 +49,15 @@ tmapverse_packages = function (include_deps = FALSE, recursive = FALSE)
 tmapverse_packages_versions = function(include_deps = FALSE, recursive = FALSE, repos = getOption("repos")) {
 	pkgs = tmapverse_packages(include_deps = include_deps, recursive = recursive)
 
-	# --- Robust CRAN-safe repo handling ---
 	if (is.null(repos) || length(repos) == 0 || is.na(repos["CRAN"]) || repos["CRAN"] == "@CRAN@") {
 		repos = c(CRAN = "https://cloud.r-project.org")
 	}
-	# --------------------------------------
 
 	all_pkgs = tryCatch({
 		utils::available.packages(repos = repos)
 	}, error = function(e) NULL)
 
 	if (is.null(all_pkgs)) {
-		# fallback: use packageDescription for local versions only
 		cran_version = replicate(length(pkgs), package_version("0.0.0"), simplify = FALSE)
 		names(cran_version) = pkgs
 	} else {
