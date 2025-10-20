@@ -35,22 +35,6 @@ Under the hood
 | **terra** | Modern package for raster and vector spatial data. | <img src="man/figures/terra.png" width="80"/> |
 | **cols4all** | Explore, compare, and apply color palettes for maps. | <img src="man/figures/cols4all.png" width="80"/> |
 
----
-
-## tmapverse hex wall
-
-<div class="hex">
-  <a href="https://r-tmap.github.io/tmapverse/">
-    <svg viewBox="0 0 100 115" preserveAspectRatio="xMidYMid meet" aria-label="tmapverse">
-      <defs><clipPath id="hex-0"><polygon points="50 3.7 92.5 28.8 92.5 86.2 50 111.3 7.5 86.2 7.5 28.8"/></clipPath></defs>
-      <image clip-path="url(#hex-0)" href="https://raw.githubusercontent.com/r-tmap/tmapverse/main/man/figures/logo.png"
-             x="0" y="0" width="100" height="115" preserveAspectRatio="xMidYMid slice"/>
-      <polygon points="50 3.7 92.5 28.8 92.5 86.2 50 111.3 7.5 86.2 7.5 28.8"
-               fill="none" stroke="rgba(0,0,0,0.06)"/>
-    </svg>
-  </a>
-  <span class="hex-label">tmapverse</span>
-</div>
 
 ## Installation
 
